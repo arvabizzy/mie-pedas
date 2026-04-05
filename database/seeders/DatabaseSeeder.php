@@ -1,10 +1,8 @@
 <?php
 
-namespace Database\Seeders; // Pakai ini, JANGAN DatabaseSeeder
+namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,26 +11,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat atau Update Admin
-        User::updateOrCreate(
-            ['email' => 'admin@gmail.com'], // Kunci pengecekan
-            [
-                'name'     => 'Admin Ganteng',
-                'username' => 'admin',
-                'password' => Hash::make('password123'),
-                'role'     => 'admin',
-            ]
-        );
-
-        // Buat atau Update Kasir
-        User::updateOrCreate(
-            ['email' => 'kasir@gmail.com'], // Kunci pengecekan
-            [
-                'name'     => 'Kasir Toko',
-                'username' => 'kasir',
-                'password' => Hash::make('password123'),
-                'role'     => 'kasir',
-            ]
-        );
+        // Panggil UserSeeder yang sudah lo buat tadi
+        $this->call([
+            UserSeeder::class,
+            // Nanti kalau lo buat MenuSeeder, tinggal tambah baris di bawah ini:
+            // MenuSeeder::class,
+        ]);
     }
 }

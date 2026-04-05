@@ -7,24 +7,24 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Jalankan migrasi untuk tambah kolom kategori.
+     * Run the migrations.
      */
     public function up(): void
     {
         Schema::table('menus', function (Blueprint $table) {
-            // Kita pakai string, default-nya 'mie', ditaruh setelah kolom foto
-            $table->string('kategori')->default('mie')->after('foto');
+            // Kita tambah kolom deskripsi, taruh setelah kolom stok
+            $table->text('deskripsi')->nullable()->after('stok');
         });
     }
 
     /**
-     * Batalkan migrasi (PENTING biar gak error pas migrate:rollback).
+     * Reverse the migrations.
      */
     public function down(): void
     {
         Schema::table('menus', function (Blueprint $table) {
-            // Hapus kolom kategori jika migrasi dibatalkan
-            $table->dropColumn('kategori');
+            // Ini penting! Biar pas rollback, kolom deskripsi dibuang
+            $table->dropColumn('deskripsi');
         });
     }
 };

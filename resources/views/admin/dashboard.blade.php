@@ -17,6 +17,7 @@
                 </div>
             @endif
 
+            {{-- Filter Range --}}
             <div class="flex gap-2 mb-6">
                 @foreach (['all' => 'Semua', 'today' => 'Hari Ini', 'week' => 'Minggu Ini', 'month' => 'Bulan Ini'] as $key => $label)
                     <a href="{{ route('admin.dashboard', ['range' => $key]) }}"
@@ -26,6 +27,7 @@
                 @endforeach
             </div>
 
+            {{-- Statistik Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-red-600">
                     <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Total Penjualan ({{ ucfirst($range) }})</p>
@@ -41,20 +43,25 @@
                 </div>
             </div>
 
+            {{-- Manajemen Toko --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl p-6 mb-8">
                 <h3 class="text-xl font-black mb-6 text-gray-800 flex items-center gap-2">Manajemen Toko</h3>
+
                 <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 mb-8">
                     <h4 class="font-bold mb-4 text-gray-700 text-sm uppercase italic">Tambah Menu Baru</h4>
+
                     <form action="{{ route('admin.menu.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
                             <div>
                                 <label class="text-[10px] font-bold text-gray-400 uppercase">Nama Menu</label>
-                                <input type="text" name="nama_menu" placeholder="Mie Iblis" required class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
+                                <input type="text" name="nama_menu" placeholder="Mie Iblis" required
+                                    class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold text-gray-400 uppercase">Kategori</label>
-                                <select name="kategori" required class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
+                                <select name="kategori" required
+                                    class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
                                     <option value="mie">Mie</option>
                                     <option value="snack">Snack</option>
                                     <option value="minuman">Minuman</option>
@@ -63,21 +70,35 @@
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold text-gray-400 uppercase">Harga</label>
-                                <input type="number" name="harga" placeholder="15000" required class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
+                                <input type="number" name="harga" placeholder="15000" required
+                                    class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
                             </div>
+
+                            {{-- INPUT DESKRIPSI --}}
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase">Deskripsi</label>
+                                <input type="text" name="deskripsi" placeholder="Level pedas..."
+                                    class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
+                            </div>
+
                             <div>
                                 <label class="text-[10px] font-bold text-gray-400 uppercase">Stok Awal</label>
-                                <input type="number" name="stok" placeholder="50" required class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
+                                <input type="number" name="stok" placeholder="50" required
+                                    class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm">
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold text-gray-400 uppercase">Foto</label>
                                 <input type="file" name="foto" class="w-full text-[10px] text-gray-500 pt-2">
                             </div>
                         </div>
-                        <button type="submit" class="mt-6 bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-lg text-sm uppercase tracking-wider">Simpan Menu Baru</button>
+                        <button type="submit"
+                            class="mt-6 bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-lg text-sm uppercase tracking-wider">
+                            Simpan Menu Baru
+                        </button>
                     </form>
                 </div>
 
+                {{-- Tabel Menu --}}
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -103,6 +124,10 @@
                                             </div>
                                             <div>
                                                 <p class="font-bold text-gray-800 leading-none">{{ $menu->nama_menu }}</p>
+                                                {{-- Menampilkan Deskripsi di Tabel --}}
+                                                @if($menu->deskripsi)
+                                                    <p class="text-[10px] text-gray-400 italic line-clamp-1">{{ $menu->deskripsi }}</p>
+                                                @endif
                                                 <p class="text-xs text-red-600 font-bold">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
                                             </div>
                                         </div>
@@ -122,7 +147,7 @@
                                     <td class="p-4 text-center">
                                         <form action="{{ route('admin.menu.destroy', $menu->id) }}" method="POST" onsubmit="return confirm('Hapus menu ini?')">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-300 hover:text-red-600 transition text-xl">Hapus</button>
+                                            <button type="submit" class="text-red-300 hover:text-red-600 transition font-bold text-xs uppercase">Hapus</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -132,6 +157,7 @@
                 </div>
             </div>
 
+            {{-- Riwayat Transaksi --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl p-6 mt-8">
                 <h3 class="text-xl font-black mb-6 text-gray-800 flex items-center gap-2 italic uppercase">Riwayat Transaksi</h3>
                 <div class="overflow-x-auto">
@@ -161,6 +187,7 @@
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
 </x-app-layout>
