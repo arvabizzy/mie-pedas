@@ -127,7 +127,7 @@
                     </a>
                     <a href="#features"
                         class="bg-white text-gray-900 border border-gray-200 text-lg font-bold py-4 px-8 rounded-xl hover:bg-gray-50 transition flex items-center justify-center gap-2">
-                        Lihat Menu
+                        Lihat Fitur
                     </a>
                 </div>
             </div>
