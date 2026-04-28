@@ -108,7 +108,7 @@
             <div class="text-center md:text-left z-10">
                 <div
                     class="inline-block bg-red-100 text-red-600 px-4 py-1 rounded-full text-sm font-bold mb-4 border border-red-200">
-                    🔥 Pedasnya Nampol!
+                    🔥 Pedasnya pedes banget!
                 </div>
                 <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
                     Level Pedas <span
