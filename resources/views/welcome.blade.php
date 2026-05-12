@@ -91,7 +91,7 @@
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}"
                                 class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition transform hover:-translate-y-1">
-                                Daftar Admin
+                                Daftar Kasir
                             </a>
                         @endif
                     @endauth
