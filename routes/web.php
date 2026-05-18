@@ -15,10 +15,12 @@ Route::get('/', function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Fitur Menu (Tambah, Update Stok, & Hapus)
+    // Fitur Menu (Tambah, Edit, Update Stok, & Hapus)
     Route::post('/admin/menu', [MenuController::class, 'store'])->name('admin.menu.store');
+    Route::get('/admin/menu/{id}/edit', [MenuController::class, 'edit'])->name('admin.menu.edit');
+    Route::put('/admin/menu/{id}', [MenuController::class, 'update'])->name('admin.menu.update');
     Route::patch('/admin/menu/{id}/update-stok', [MenuController::class, 'updateStok'])->name('admin.menu.updateStok');
-    Route::delete('/admin/menu/{id}', [MenuController::class, 'destroy'])->name('admin.menu.destroy'); // BARU
+    Route::delete('/admin/menu/{id}', [MenuController::class, 'destroy'])->name('admin.menu.destroy');
 });
 
 // 3. Group Khusus KASIR

@@ -30,8 +30,10 @@
             {{-- Statistik Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-red-600">
-                    <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Total Penjualan ({{ ucfirst($range) }})</p>
-                    <p class="text-3xl font-black text-gray-900">Rp {{ number_format($total_pendapatan, 0, ',', '.') }}</p>
+                    <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Total Penjualan
+                        ({{ ucfirst($range) }})</p>
+                    <p class="text-3xl font-black text-gray-900">Rp {{ number_format($total_pendapatan, 0, ',', '.') }}
+                    </p>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-orange-500">
                     <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Menu Terlaris</p>
@@ -39,7 +41,8 @@
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-gray-800">
                     <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Stok Menipis</p>
-                    <p class="text-3xl font-black text-red-600">{{ $stok_menipis }} <span class="text-sm text-gray-400 font-normal">Menu</span></p>
+                    <p class="text-3xl font-black text-red-600">{{ $stok_menipis }} <span
+                            class="text-sm text-gray-400 font-normal">Menu</span></p>
                 </div>
             </div>
 
@@ -105,7 +108,6 @@
                             <tr class="bg-gray-800 text-white text-xs uppercase tracking-widest">
                                 <th class="p-4 rounded-tl-xl">Menu / Kategori</th>
                                 <th class="p-4 text-center">Stok</th>
-                                <th class="p-4 text-center">Update Stok</th>
                                 <th class="p-4 rounded-tr-xl text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -116,39 +118,52 @@
                                         <div class="flex items-center gap-3">
                                             <div class="relative">
                                                 @if ($menu->foto)
-                                                    <img src="{{ asset('storage/' . $menu->foto) }}" class="w-12 h-12 object-cover rounded-xl shadow-sm">
+                                                    <img src="{{ asset('storage/' . $menu->foto) }}"
+                                                        class="w-12 h-12 object-cover rounded-xl shadow-sm">
                                                 @else
-                                                    <div class="w-12 h-12 bg-gray-200 rounded-xl flex items-center justify-center text-[10px] text-gray-400">N/A</div>
+                                                    <div
+                                                        class="w-12 h-12 bg-gray-200 rounded-xl flex items-center justify-center text-[10px] text-gray-400">
+                                                        N/A</div>
                                                 @endif
-                                                <span class="absolute -top-2 -left-2 bg-white px-1.5 py-0.5 rounded shadow text-[8px] border uppercase font-bold">{{ $menu->kategori }}</span>
+                                                <span
+                                                    class="absolute -top-2 -left-2 bg-white px-1.5 py-0.5 rounded shadow text-[8px] border uppercase font-bold">{{ $menu->kategori }}</span>
                                             </div>
                                             <div>
                                                 <p class="font-bold text-gray-800 leading-none">{{ $menu->nama_menu }}</p>
                                                 {{-- Menampilkan Deskripsi di Tabel --}}
                                                 @if($menu->deskripsi)
-                                                    <p class="text-[10px] text-gray-400 italic line-clamp-1">{{ $menu->deskripsi }}</p>
+                                                    <p class="text-[10px] text-gray-400 italic line-clamp-1">
+                                                        {{ $menu->deskripsi }}</p>
                                                 @endif
-                                                <p class="text-xs text-red-600 font-bold">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+                                                <p class="text-xs text-red-600 font-bold">Rp
+                                                    {{ number_format($menu->harga, 0, ',', '.') }}</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="p-4 text-center">
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black {{ $menu->stok < 10 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
+                                        <span
+                                            class="px-3 py-1 rounded-full text-[10px] font-black {{ $menu->stok < 10 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
                                             {{ $menu->stok }} Porsi
                                         </span>
                                     </td>
-                                    <td class="p-4">
-                                        <form action="{{ route('admin.menu.updateStok', $menu->id) }}" method="POST" class="flex items-center justify-center gap-2">
-                                            @csrf @method('PATCH')
-                                            <input type="number" name="stok" value="{{ $menu->stok }}" class="w-16 rounded-lg border-gray-300 text-[10px] py-1 text-center font-bold">
-                                            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase hover:bg-blue-700 transition">Update</button>
-                                        </form>
-                                    </td>
+
                                     <td class="p-4 text-center">
-                                        <form action="{{ route('admin.menu.destroy', $menu->id) }}" method="POST" onsubmit="return confirm('Hapus menu ini?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-300 hover:text-red-600 transition font-bold text-xs uppercase">Hapus</button>
-                                        </form>
+                                        <div class="flex items-center justify-center gap-2">
+                                            {{-- Tombol Edit --}}
+                                            <a href="{{ route('admin.menu.edit', $menu->id) }}"
+                                                class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase transition">
+                                                ✏️ Edit
+                                            </a>
+                                            {{-- Tombol Hapus --}}
+                                            <form action="{{ route('admin.menu.destroy', $menu->id) }}" method="POST"
+                                                onsubmit="return confirm('Hapus menu ini?')">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                    class="bg-red-100 hover:bg-red-600 hover:text-white text-red-500 px-3 py-1 rounded-lg text-[10px] font-black uppercase transition">
+                                                    🗑 Hapus
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -159,7 +174,8 @@
 
             {{-- Riwayat Transaksi --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl p-6 mt-8">
-                <h3 class="text-xl font-black mb-6 text-gray-800 flex items-center gap-2 italic uppercase">Riwayat Transaksi</h3>
+                <h3 class="text-xl font-black mb-6 text-gray-800 flex items-center gap-2 italic uppercase">Riwayat
+                    Transaksi</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -173,9 +189,12 @@
                             @forelse($transactions as $trx)
                                 <tr class="hover:bg-gray-50 transition">
                                     <td class="p-4 text-sm text-gray-600">{{ $trx->created_at->format('d M Y, H:i') }}</td>
-                                    <td class="p-4 font-bold text-gray-800">Rp {{ number_format($trx->total_harga, 0, ',', '.') }}</td>
+                                    <td class="p-4 font-bold text-gray-800">Rp
+                                        {{ number_format($trx->total_harga, 0, ',', '.') }}</td>
                                     <td class="p-4 text-right">
-                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter">Berhasil Pay</span>
+                                        <span
+                                            class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter">Berhasil
+                                            Pay</span>
                                     </td>
                                 </tr>
                             @empty

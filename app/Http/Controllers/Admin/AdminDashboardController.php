@@ -14,34 +14,58 @@ class AdminDashboardController extends Controller
     public function index(Request $request)
     {
         // Tangkap filter dari URL (default: all)
-        $range = $request->query('range', 'all');
-        $query = Transaction::query();
+        $range     = $request->query('range', 'all');
+        $date_from = $request->query('date_from');
+        $date_to   = $request->query('date_to');
 
-        // 1. Logika Filter Pendapatan
-        if ($range == 'today') {
-            $query->whereDate('created_at', today());
-        } elseif ($range == 'week') {
-            $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
-        } elseif ($range == 'month') {
-            $query->whereMonth('created_at', now()->month)
-                  ->whereYear('created_at', now()->year);
+        // Jika ada custom date, override range ke 'custom'
+        if ($date_from || $date_to) {
+            $range = 'custom';
         }
 
-        $total_pendapatan = $query->sum('total_harga') ?? 0;
+        // Helper closure untuk apply filter ke query manapun
+        $applyFilter = function ($q) use ($range, $date_from, $date_to) {
+            if ($range == 'today') {
+                $q->whereDate('created_at', today());
+            } elseif ($range == 'yesterday') {
+                $q->whereDate('created_at', today()->subDay());
+            } elseif ($range == 'week') {
+                $q->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+            } elseif ($range == 'month') {
+                $q->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
+            } elseif ($range == 'custom') {
+                if ($date_from) $q->whereDate('created_at', '>=', $date_from);
+                if ($date_to)   $q->whereDate('created_at', '<=', $date_to);
+            }
+            return $q;
+        };
 
-        // Ambil data transaksi untuk tabel riwayat (limit 10 terbaru)
-        $transactions = $query->latest()->limit(10)->get();
+        // 1. Total Pendapatan (query terpisah agar tidak kena limit)
+        $total_pendapatan = $applyFilter(Transaction::query())->sum('total_harga') ?? 0;
+        $total_transaksi  = $applyFilter(Transaction::query())->count();
 
-        // 2. Cari Menu Terlaris
+        // 2. Ambil Riwayat Transaksi (limit 50 terbaru, eager load kasir)
+        $transactions = $applyFilter(Transaction::query())
+            ->with('user')
+            ->latest()
+            ->limit(50)
+            ->get();
+
+        // 3. Cari Menu Terlaris
         $terlarisQuery = TransactionDetail::select('menu_id', DB::raw('SUM(jumlah) as total_sold'))
             ->join('transactions', 'transaction_details.transaction_id', '=', 'transactions.id');
 
         if ($range == 'today') {
             $terlarisQuery->whereDate('transactions.created_at', today());
+        } elseif ($range == 'yesterday') {
+            $terlarisQuery->whereDate('transactions.created_at', today()->subDay());
         } elseif ($range == 'week') {
             $terlarisQuery->whereBetween('transactions.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
         } elseif ($range == 'month') {
             $terlarisQuery->whereMonth('transactions.created_at', now()->month);
+        } elseif ($range == 'custom') {
+            if ($date_from) $terlarisQuery->whereDate('transactions.created_at', '>=', $date_from);
+            if ($date_to)   $terlarisQuery->whereDate('transactions.created_at', '<=', $date_to);
         }
 
         $terlaris = $terlarisQuery->groupBy('menu_id')->orderBy('total_sold', 'desc')->first();
@@ -52,21 +76,24 @@ class AdminDashboardController extends Controller
             $nama_menu_terlaris = $menu ? $menu->nama_menu : 'Menu telah dihapus';
         }
 
-        // 3. Hitung menu yang stoknya menipis
+        // 4. Hitung menu yang stoknya menipis
         $stok_menipis = Menu::where('stok', '<', 10)->where('stok', '>', 0)->count();
 
-        // 4. Ambil semua menu (DIURUTKAN BERDASARKAN KATEGORI AGAR RAPI)
+        // 5. Ambil semua menu
         $menus = Menu::orderByRaw("FIELD(kategori, 'mie', 'snack', 'minuman', 'paket') ASC")
                      ->orderBy('nama_menu', 'asc')
                      ->get();
 
         return view('admin.dashboard', compact(
             'total_pendapatan',
+            'total_transaksi',
             'nama_menu_terlaris',
             'stok_menipis',
             'menus',
             'transactions',
-            'range'
+            'range',
+            'date_from',
+            'date_to'
         ));
     }
 }

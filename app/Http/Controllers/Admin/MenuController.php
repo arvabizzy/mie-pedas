@@ -37,6 +37,56 @@ class MenuController extends Controller
         return redirect()->back()->with('success', 'Menu berhasil ditambah!');
     }
 
+    // ─── EDIT: Tampilkan form edit ─────────────────────────────────────────────
+    public function edit($id)
+    {
+        $menu = Menu::findOrFail($id);
+        return view('admin.menu.edit', compact('menu'));
+    }
+
+    // ─── UPDATE: Simpan perubahan (nama, harga, foto, stok, dll) ──────────────
+    public function update(Request $request, $id)
+    {
+        $menu = Menu::findOrFail($id);
+
+        $request->validate([
+            'nama_menu' => 'required|string|max:255',
+            'harga'     => 'required|numeric|min:0',
+            'kategori'  => 'required|string',
+            'deskripsi' => 'nullable|string',
+            'stok'      => 'required|numeric|min:0',
+            'foto'      => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
+        ]);
+
+        $data = [
+            'nama_menu' => $request->nama_menu,
+            'harga'     => $request->harga,
+            'kategori'  => $request->kategori,
+            'deskripsi' => $request->deskripsi,
+            'stok'      => $request->stok,
+        ];
+
+        // Jika ada foto baru → hapus lama, simpan yang baru
+        if ($request->hasFile('foto')) {
+            if ($menu->foto) {
+                Storage::disk('public')->delete($menu->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('menu', 'public');
+        }
+
+        // Opsi hapus foto tanpa upload baru
+        if ($request->boolean('hapus_foto') && !$request->hasFile('foto')) {
+            if ($menu->foto) {
+                Storage::disk('public')->delete($menu->foto);
+            }
+            $data['foto'] = null;
+        }
+
+        $menu->update($data);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Menu "' . $menu->nama_menu . '" berhasil diperbarui!');
+    }
+
     public function updateStok(Request $request, $id)
     {
         $request->validate(['stok' => 'required|numeric|min:0']);
