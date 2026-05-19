@@ -2,7 +2,7 @@
     <x-slot name="title">Edit Menu | HotNoodle 🍜</x-slot>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            ✏️ Edit Menu &mdash; <span class="text-red-600">{{ $menu->nama_menu }}</span>
+             Edit Menu &mdash; <span class="text-red-600">{{ $menu->nama_menu }}</span>
         </h2>
     </x-slot>
 
@@ -161,7 +161,7 @@
                     <div class="mt-8 flex items-center gap-4 pt-6 border-t border-gray-100">
                         <button type="submit"
                                 class="flex-1 bg-red-600 hover:bg-red-700 text-white font-black py-3 rounded-xl uppercase tracking-wider transition shadow-lg text-sm">
-                            💾 Simpan Perubahan
+                             Simpan Perubahan
                         </button>
                         <a href="{{ route('admin.dashboard') }}"
                            class="flex-1 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl uppercase tracking-wider transition text-sm">
